@@ -8,7 +8,7 @@ const registerSchema = z.object({
   email: z.string().email('Debe ser un correo electrónico válido.'),
   password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres.'),
   role: z.nativeEnum(UserRole, {
-    errorMap: () => ({ message: 'El rol debe ser empresa, freelancer o admin.' })
+    message: 'El rol debe ser empresa, freelancer o admin.'
   }),
 });
 
@@ -39,7 +39,7 @@ export class AuthController {
       });
     } catch (error: any) {
       if (error instanceof z.ZodError) {
-        res.status(400).json({ errors: error.errors });
+        res.status(400).json({ errors: error.format() });
         return;
       }
       res.status(400).json({ error: error.message });
@@ -64,7 +64,7 @@ export class AuthController {
       });
     } catch (error: any) {
       if (error instanceof z.ZodError) {
-        res.status(400).json({ errors: error.errors });
+        res.status(400).json({ errors: error.format() });
         return;
       }
       res.status(401).json({ error: error.message });
