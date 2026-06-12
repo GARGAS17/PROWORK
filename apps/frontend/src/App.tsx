@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
+import { LandingPage } from './features/landing/pages/LandingPage';
+
 function App() {
   return (
     <AuthProvider>
@@ -10,14 +12,9 @@ function App() {
           {/* ========================================== */}
           {/* RUTAS PÚBLICAS */}
           {/* ========================================== */}
-          <Route path="/" element={
-            <div className="flex flex-col items-center justify-center h-screen bg-gray-50">
-              <h1 className="text-4xl font-bold mb-4">Bienvenido a Prowork</h1>
-              <a href="/login" className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Iniciar Sesión</a>
-            </div>
-          } />
-          <Route path="/login" element={<div className="p-10 text-2xl font-bold">Página de Login (No Protegida)</div>} />
-          <Route path="/register" element={<div className="p-10 text-2xl font-bold">Página de Registro (No Protegida)</div>} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<Navigate to="/#auth" replace />} />
+          <Route path="/register" element={<Navigate to="/#auth" replace />} />
 
           {/* ========================================== */}
           {/* RUTAS FREELANCER */}
