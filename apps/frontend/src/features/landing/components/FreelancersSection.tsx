@@ -8,32 +8,38 @@ export const FreelancersSection = () => {
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
-        className="flex flex-col gap-6 bg-gray-900/40 backdrop-blur-2xl p-8 md:p-12 rounded-3xl border border-gray-800/80 shadow-2xl relative overflow-hidden"
+        className="flex flex-col gap-6 bg-emerald-500/5 p-8 md:p-10 rounded-3xl border border-emerald-500/20 relative overflow-hidden"
       >
-        <div className="absolute -top-32 -right-32 w-64 h-64 bg-blue-600/20 rounded-full blur-[80px]"></div>
-        <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-violet-600/20 rounded-full blur-[80px]"></div>
-        
-        <div className="relative z-10">
-          <h2 className="text-4xl font-extrabold tracking-tight text-white mb-4">
-            Construye reputación con código real.
-          </h2>
-          <p className="text-lg text-gray-400 max-w-lg mb-8 font-light">
-            En Prowork, los portfolios vacíos no importan. Lo que importa es cómo resuelves el problema. Postúlate a proyectos desafiantes y demuestra tu valía.
-          </p>
+        <div className="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl"></div>
 
-          <ul className="space-y-5">
-            {['Acceso a proyectos top tier', 'Pagos garantizados en escrow', 'Comunidad de alto rendimiento'].map((item, i) => (
-              <li key={i} className="flex items-center gap-4">
-                <div className="w-8 h-8 rounded-full bg-blue-500/20 border border-blue-500/50 flex items-center justify-center shrink-0 shadow-[0_0_10px_rgba(59,130,246,0.3)]">
-                  <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <span className="font-medium text-gray-200 text-lg">{item}</span>
-              </li>
-            ))}
-          </ul>
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 w-fit">
+          <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span className="text-sm font-medium text-emerald-300">Para Freelancers</span>
         </div>
+
+        <h2 className="text-4xl font-bold tracking-tight text-white">
+          Construye reputación con código real.
+        </h2>
+        <p className="text-lg text-gray-400 max-w-lg">
+          Tu nodo en el grafo crece con cada proyecto completado. Más conexiones, más visibilidad, más proyectos de alto impacto.
+        </p>
+
+        <ul className="space-y-4 mt-2">
+          {[
+            { label: 'Proyectos top tier garantizados', color: 'emerald' },
+            { label: 'Pagos en escrow — cobras siempre', color: 'emerald' },
+            { label: 'Reputación on-chain verificable', color: 'emerald' },
+          ].map((item, i) => (
+            <li key={i} className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0">
+                <svg className="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <span className="font-medium text-gray-200">{item.label}</span>
+            </li>
+          ))}
+        </ul>
       </motion.div>
     </SectionContainer>
   );

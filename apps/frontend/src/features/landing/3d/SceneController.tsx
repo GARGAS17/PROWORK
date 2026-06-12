@@ -1,28 +1,27 @@
-import { Environment, ContactShadows } from '@react-three/drei';
 import { Suspense } from 'react';
-import { FloatingCore } from './FloatingCore';
-import { ParticleSystem } from './ParticleSystem';
+import { ContactShadows } from '@react-three/drei';
+import { NetworkGraph } from './NetworkGraph';
 
 export const SceneController = () => {
   return (
     <>
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[10, 10, 5]} intensity={2} color="#ffffff" />
-      <directionalLight position={[-10, -10, -5]} intensity={1} color="#4f46e5" />
-      
+      {/* Iluminación premium */}
+      <ambientLight intensity={0.3} />
+      <directionalLight position={[5, 5, 5]} intensity={1.5} color="#ffffff" />
+      <directionalLight position={[-5, -3, -5]} intensity={0.8} color="#6366f1" />
+      <pointLight position={[0, 0, 2]} intensity={1} color="#818cf8" />
+
+      {/* Grafo de red industrial */}
       <Suspense fallback={null}>
-        <Environment preset="city" />
+        <NetworkGraph />
       </Suspense>
-      
-      <FloatingCore />
-      <ParticleSystem />
-      
-      <ContactShadows 
-        position={[0, -3, 0]} 
-        opacity={0.4} 
-        scale={20} 
-        blur={2} 
-        far={4.5} 
+
+      <ContactShadows
+        position={[0, -3.5, 0]}
+        opacity={0.2}
+        scale={15}
+        blur={3}
+        far={5}
       />
     </>
   );

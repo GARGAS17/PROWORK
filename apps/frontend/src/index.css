@@ -2,10 +2,6 @@
 
 @layer base {
   body {
-    background-color: #030712; /* gray-950 */
-    color: #f3f4f6; /* gray-100 */
-    margin: 0;
-    padding: 0;
-    font-family: ui-sans-serif, system-ui, sans-serif;
+    @apply bg-gray-50 text-gray-900 m-0 p-0 font-sans;
   }
 }

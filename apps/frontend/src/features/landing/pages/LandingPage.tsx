@@ -1,33 +1,31 @@
 import { lazy, Suspense } from 'react';
 import { LandingSectionProvider } from '../context/LandingSectionContext';
 import { Navbar } from '../components/Navbar';
-import { HeroSection } from '../components/HeroSection';
-import { HowItWorksSection } from '../components/HowItWorksSection';
-import { CompaniesSection } from '../components/CompaniesSection';
-import { FreelancersSection } from '../components/FreelancersSection';
-import { AuthSection } from '../components/AuthSection';
+import { SectionContainer } from '../components/SectionContainer';
 
-// Carga diferida del canvas 3D para rendimiento
 const LandingCanvas = lazy(() => import('../3d/LandingCanvas'));
 
 export const LandingPage = () => {
   return (
     <LandingSectionProvider>
-      <div className="relative w-full min-h-screen overflow-x-hidden font-sans">
-        <Navbar />
+      {/* Fondo oscuro base */}
+      <div className="relative w-full min-h-screen bg-gray-950 overflow-x-hidden">
         
-        {/* Entorno 3D Inmersivo */}
+        {/* Navbar (z-50, siempre encima del canvas) */}
+        <Navbar />
+
+        {/* Canvas 3D (z-10, primer plano, el Html de nodos emerge aquí) */}
         <Suspense fallback={null}>
           <LandingCanvas />
         </Suspense>
 
-        {/* Contenido con scroll narrativo */}
-        <div className="relative z-10">
-          <HeroSection />
-          <HowItWorksSection />
-          <CompaniesSection />
-          <FreelancersSection />
-          <AuthSection />
+        {/* Secciones fantasma (z-0, debajo del canvas) — solo para el scroll y el observer */}
+        <div className="relative z-0">
+          <SectionContainer id="home" />
+          <SectionContainer id="how-it-works" />
+          <SectionContainer id="companies" />
+          <SectionContainer id="freelancers" />
+          <SectionContainer id="auth" />
         </div>
       </div>
     </LandingSectionProvider>

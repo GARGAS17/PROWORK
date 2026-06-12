@@ -8,29 +8,35 @@ export const CompaniesSection = () => {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="flex flex-col gap-6 text-center md:text-left"
+        className="flex flex-col gap-6"
       >
-        <h2 className="text-4xl font-extrabold tracking-tight text-white">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 w-fit">
+          <span className="w-2 h-2 rounded-full bg-indigo-400"></span>
+          <span className="text-sm font-medium text-indigo-300">Para Empresas</span>
+        </div>
+
+        <h2 className="text-4xl font-bold tracking-tight text-white">
           Escala tu capacidad operativa.
         </h2>
-        <p className="text-lg text-gray-400 max-w-lg mx-auto md:mx-0">
-          Accede a talento de élite validado por Prowork. Ejecuta proyectos críticos sin la lentitud de expandir tu nómina interna.
+        <p className="text-lg text-gray-400 max-w-lg">
+          Publica un proyecto y observa cómo el grafo de IA conecta tu empresa con el nodo de talento ideal en minutos, no semanas.
         </p>
 
-        <div className="grid grid-cols-2 gap-4 mt-8">
-          <div className="p-6 rounded-2xl bg-gray-900/50 backdrop-blur-md border border-gray-800 shadow-sm">
-            <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600 mb-1">3x</div>
-            <div className="text-sm text-gray-400 font-medium">Velocidad de ejecución</div>
+        <div className="grid grid-cols-2 gap-4 mt-4">
+          <div className="p-5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20">
+            <div className="text-3xl font-bold text-white mb-1">3x</div>
+            <div className="text-sm text-gray-400">Velocidad de contratación</div>
           </div>
-          <div className="p-6 rounded-2xl bg-gray-900/50 backdrop-blur-md border border-gray-800 shadow-sm">
-            <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-violet-600 mb-1">100%</div>
-            <div className="text-sm text-gray-400 font-medium">Talento verificado</div>
+          <div className="p-5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20">
+            <div className="text-3xl font-bold text-white mb-1">100%</div>
+            <div className="text-sm text-gray-400">Talento verificado</div>
           </div>
-          <div className="p-6 rounded-2xl bg-blue-900/10 border border-blue-900/30 shadow-[0_0_30px_rgba(37,99,235,0.1)] col-span-2 relative overflow-hidden backdrop-blur-lg">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-violet-600/10"></div>
+          <div className="col-span-2 p-5 rounded-2xl bg-gray-900 border border-white/10 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-600/20 rounded-full blur-2xl -translate-y-8 translate-x-8"></div>
             <div className="relative z-10">
-              <div className="text-2xl font-bold text-white mb-2">Enterprise Ready</div>
-              <div className="text-sm text-gray-300">Diseñado para integrarse en los flujos de trabajo de las startups más exigentes del mundo.</div>
+              <div className="text-sm font-mono text-indigo-400 mb-2">SISTEMA ACTIVO</div>
+              <div className="text-white font-bold text-xl">Enterprise Ready</div>
+              <div className="text-gray-400 text-sm mt-1">Acuerdos inteligentes · Pagos garantizados · Auditoría completa</div>
             </div>
           </div>
         </div>
