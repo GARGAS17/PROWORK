@@ -19,7 +19,7 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/applications', applicationRoutes);
 
 // Ruta de estado / healthcheck
-app.get('/health', (req: Request, res: Response) => {
+app.get('/health', (_req: Request, res: Response) => {
   res.status(200).json({ status: 'ok', message: 'Servidor funcionando correctamente' });
 });
 
