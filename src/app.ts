@@ -11,9 +11,12 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+import applicationRoutes from './modules/applications/routes';
+
 // Rutas de la API
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
+app.use('/api/applications', applicationRoutes);
 
 // Ruta de estado / healthcheck
 app.get('/health', (req: Request, res: Response) => {
