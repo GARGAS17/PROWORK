@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useActiveSection } from '../hooks/useActiveSection';
+import { Sparkles, ArrowRight, Server, ShieldCheck, Zap, Briefcase, Building2, TerminalSquare, CheckCircle2 } from 'lucide-react';
 
 /* ─────────────────────────────────────────────
    SCROLL HELPER
@@ -13,40 +14,58 @@ const scrollTo = (id: string) =>
 ───────────────────────────────────────────── */
 const HeroPanel = () => (
   <motion.div
-    initial={{ opacity: 0, scale: 0.85, y: 20 }}
+    initial={{ opacity: 0, scale: 0.95, y: 15 }}
     animate={{ opacity: 1, scale: 1, y: 0 }}
-    exit={{ opacity: 0, scale: 0.85, y: -20 }}
-    transition={{ duration: 0.55, ease: 'easeOut' }}
-    style={{ width: '560px', maxWidth: '92vw', pointerEvents: 'auto' }}
-    className="flex flex-col items-center text-center gap-5 select-none"
+    exit={{ opacity: 0, scale: 0.95, y: -15 }}
+    transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }} // smooth spring
+    style={{ width: '600px', maxWidth: '92vw', pointerEvents: 'auto' }}
+    className="flex flex-col items-start gap-6 select-none relative"
   >
-    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/60 border border-gray-200 backdrop-blur-md shadow-sm">
-      <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse" />
-      <span className="text-sm font-semibold text-gray-800">Prowork 2.0 ya está aquí</span>
-    </div>
-    <h1 className="text-5xl md:text-6xl font-black tracking-tight text-gray-900 leading-[1.1]">
-      Tus ideas valen más<br />
-      <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-600">que tu CV.</span>
+    {/* Glow background */}
+    <div className="absolute -inset-20 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none" />
+
+    <motion.div 
+      whileHover={{ scale: 1.05 }}
+      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/40 border border-white/50 backdrop-blur-xl shadow-sm text-sm font-semibold text-gray-800"
+    >
+      <Sparkles className="w-4 h-4 text-indigo-600" />
+      <span>Prowork 2.0 ya está aquí</span>
+    </motion.div>
+
+    <h1 className="text-6xl md:text-7xl font-black tracking-tight text-gray-900 leading-[1.05] drop-shadow-sm">
+      Tus ideas valen<br />
+      más <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500">que tu CV.</span>
     </h1>
-    <p className="text-gray-700 font-medium text-lg leading-relaxed max-w-md bg-white/30 px-4 py-2 rounded-xl backdrop-blur-sm">
+
+    <p className="text-gray-800 font-medium text-xl leading-relaxed max-w-lg bg-white/40 px-6 py-4 rounded-2xl border border-white/30 backdrop-blur-xl shadow-lg shadow-black/5">
       Pipeline industrial de contratación impulsado por IA. Empresa, talento y proyecto conectados en tiempo real.
     </p>
-    <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-700 font-semibold mt-1 bg-white/40 px-4 py-2 rounded-full backdrop-blur-sm">
-      {[['bg-indigo-500', 'Empresa'], ['bg-emerald-500', 'Talento'], ['bg-amber-500', 'Proyecto'], ['bg-cyan-500', 'IA']].map(([c, l]) => (
-        <span key={l} className="flex items-center gap-1.5">
-          <span className={`w-2 h-2 rounded-full ${c}`} />{l}
+
+    <div className="flex flex-wrap items-center gap-4 text-sm text-gray-800 font-bold mt-2">
+      {[['text-indigo-600', 'Empresa', Building2], ['text-emerald-600', 'Talento', TerminalSquare], ['text-amber-500', 'Proyecto', Briefcase], ['text-cyan-600', 'IA', Zap]].map(([c, l, Icon]) => (
+        <span key={l as string} className="flex items-center gap-1.5 bg-white/50 px-4 py-2 rounded-xl backdrop-blur-md border border-white/40 shadow-sm">
+          <Icon className={`w-4 h-4 ${c}`} />{l as string}
         </span>
       ))}
     </div>
-    <div className="flex flex-col sm:flex-row items-center gap-3 mt-2">
-      <button onClick={() => scrollTo('auth')}
-        className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-full shadow-xl shadow-indigo-600/20 transition transform hover:-translate-y-0.5">
-        Comenzar ahora
-      </button>
-      <button onClick={() => scrollTo('how-it-works')}
-        className="px-8 py-3 text-gray-800 font-bold bg-white/80 hover:bg-white border border-gray-200 rounded-full shadow-lg backdrop-blur-sm transition">
+
+    <div className="flex flex-col sm:flex-row items-center gap-4 mt-4">
+      <motion.button 
+        whileHover={{ scale: 1.03, y: -2 }}
+        whileTap={{ scale: 0.97 }}
+        onClick={() => scrollTo('auth')}
+        className="flex items-center gap-2 px-8 py-4 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-2xl shadow-2xl shadow-gray-900/20 transition-all border border-gray-700"
+      >
+        Comenzar ahora <ArrowRight className="w-5 h-5" />
+      </motion.button>
+      <motion.button 
+        whileHover={{ scale: 1.03, y: -2 }}
+        whileTap={{ scale: 0.97 }}
+        onClick={() => scrollTo('how-it-works')}
+        className="px-8 py-4 text-gray-900 font-bold bg-white/60 hover:bg-white/80 border border-white/60 rounded-2xl shadow-xl shadow-black/5 backdrop-blur-xl transition-all"
+      >
         Explorar pipeline
-      </button>
+      </motion.button>
     </div>
   </motion.div>
 );
@@ -56,36 +75,45 @@ const HeroPanel = () => (
 ───────────────────────────────────────────── */
 const HowItWorksPanel = () => (
   <motion.div
-    initial={{ opacity: 0, x: -40, scale: 0.9 }}
+    initial={{ opacity: 0, x: -40, scale: 0.95 }}
     animate={{ opacity: 1, x: 0, scale: 1 }}
-    exit={{ opacity: 0, x: -40, scale: 0.9 }}
-    transition={{ duration: 0.5, ease: 'easeOut' }}
-    style={{ width: '480px', maxWidth: '88vw', pointerEvents: 'auto' }}
-    className="flex flex-col gap-5 select-none"
+    exit={{ opacity: 0, x: -40, scale: 0.95 }}
+    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+    style={{ width: '500px', maxWidth: '88vw', pointerEvents: 'auto' }}
+    className="flex flex-col gap-6 select-none relative"
   >
-    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-100 border border-indigo-200 w-fit shadow-sm">
-      <span className="w-2 h-2 rounded-full bg-indigo-600" />
-      <span className="text-xs font-bold text-indigo-800 tracking-widest uppercase">NODO · EMPRESA</span>
+    <div className="absolute -inset-32 bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none" />
+
+    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-100/80 border border-indigo-200/50 backdrop-blur-md w-fit shadow-sm">
+      <Server className="w-3.5 h-3.5 text-indigo-700" />
+      <span className="text-xs font-bold text-indigo-800 tracking-widest uppercase">NODO · PIPELINE</span>
     </div>
-    <h2 className="text-4xl font-black text-gray-900 leading-tight drop-shadow-sm">Pipeline inteligente.</h2>
-    <p className="text-gray-800 font-medium text-base bg-white/40 px-3 py-1.5 rounded-lg backdrop-blur-sm w-fit">Sin emails. Sin esperas. Cada conexión es un evento real.</p>
-    {[
-      { color: 'bg-white/80 border-indigo-200 shadow-lg', dot: 'bg-indigo-600', title: 'La Empresa Publica', desc: 'El nodo empresa emite una señal al núcleo de IA con los requisitos del proyecto.' },
-      { color: 'bg-white/80 border-cyan-200 shadow-lg', dot: 'bg-cyan-600', title: 'Prowork IA Valida', desc: 'El hub central procesa candidatos. Solo los nodos con fit ≥ 90% reciben el flujo de datos.' },
-      { color: 'bg-white/80 border-emerald-200 shadow-lg', dot: 'bg-emerald-600', title: 'El Talento Ejecuta', desc: 'La conexión se establece. El nodo de proyecto se activa y el trabajo comienza.' },
-    ].map((s, i) => (
-      <motion.div key={i}
-        initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: i * 0.12 + 0.3 }}
-        className={`flex gap-4 p-4 rounded-xl border ${s.color} backdrop-blur-md`}
-      >
-        <div className={`w-2 h-2 rounded-full ${s.dot} mt-2 shrink-0`} />
-        <div>
-          <div className="font-bold text-gray-900 text-sm mb-1">{s.title}</div>
-          <div className="text-gray-600 font-medium text-sm leading-relaxed">{s.desc}</div>
-        </div>
-      </motion.div>
-    ))}
+
+    <h2 className="text-5xl font-black text-gray-900 leading-tight drop-shadow-sm">Pipeline<br/>Inteligente.</h2>
+    <p className="text-gray-800 font-medium text-lg bg-white/50 border border-white/40 px-5 py-3 rounded-xl backdrop-blur-xl w-fit shadow-lg shadow-black/5">Sin emails. Sin esperas. Cada conexión es un evento real.</p>
+    
+    <div className="flex flex-col gap-4 mt-2">
+      {[
+        { color: 'from-indigo-500/10 to-transparent border-indigo-200', icon: Building2, iconColor: 'text-indigo-600', bg: 'bg-indigo-100', title: 'La Empresa Publica', desc: 'El nodo empresa emite una señal al núcleo de IA con los requisitos del proyecto.' },
+        { color: 'from-cyan-500/10 to-transparent border-cyan-200', icon: Zap, iconColor: 'text-cyan-600', bg: 'bg-cyan-100', title: 'Prowork IA Valida', desc: 'El hub central procesa candidatos. Solo los nodos con fit ≥ 90% reciben el flujo de datos.' },
+        { color: 'from-emerald-500/10 to-transparent border-emerald-200', icon: TerminalSquare, iconColor: 'text-emerald-600', bg: 'bg-emerald-100', title: 'El Talento Ejecuta', desc: 'La conexión se establece. El nodo de proyecto se activa y el trabajo comienza.' },
+      ].map((s, i) => (
+        <motion.div key={i}
+          initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: i * 0.15 + 0.2 }}
+          whileHover={{ x: 5, scale: 1.02 }}
+          className={`flex gap-5 p-5 rounded-2xl bg-gradient-to-r bg-white/70 ${s.color} border backdrop-blur-xl shadow-xl shadow-black/5 cursor-default`}
+        >
+          <div className={`w-12 h-12 rounded-xl ${s.bg} border border-white/60 shadow-inner flex items-center justify-center shrink-0`}>
+            <s.icon className={`w-6 h-6 ${s.iconColor}`} />
+          </div>
+          <div>
+            <div className="font-bold text-gray-900 text-lg mb-1">{s.title}</div>
+            <div className="text-gray-700 font-medium text-sm leading-relaxed">{s.desc}</div>
+          </div>
+        </motion.div>
+      ))}
+    </div>
   </motion.div>
 );
 
@@ -94,39 +122,52 @@ const HowItWorksPanel = () => (
 ───────────────────────────────────────────── */
 const CompaniesPanel = () => (
   <motion.div
-    initial={{ opacity: 0, x: -40, scale: 0.9 }}
+    initial={{ opacity: 0, x: -40, scale: 0.95 }}
     animate={{ opacity: 1, x: 0, scale: 1 }}
-    exit={{ opacity: 0, x: -40, scale: 0.9 }}
-    transition={{ duration: 0.5, ease: 'easeOut' }}
-    style={{ width: '460px', maxWidth: '88vw', pointerEvents: 'auto' }}
-    className="flex flex-col gap-5 select-none"
+    exit={{ opacity: 0, x: -40, scale: 0.95 }}
+    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+    style={{ width: '480px', maxWidth: '88vw', pointerEvents: 'auto' }}
+    className="flex flex-col gap-6 select-none relative"
   >
-    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-100 border border-indigo-200 w-fit shadow-sm">
-      <span className="w-2 h-2 rounded-full bg-indigo-600" />
+    <div className="absolute -inset-32 bg-purple-500/10 rounded-full blur-[120px] pointer-events-none" />
+
+    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-100/80 border border-indigo-200/50 backdrop-blur-md w-fit shadow-sm">
+      <Building2 className="w-3.5 h-3.5 text-indigo-700" />
       <span className="text-xs font-bold text-indigo-800 tracking-widest uppercase">CLUSTER · EMPRESA</span>
     </div>
-    <h2 className="text-4xl font-black text-gray-900 drop-shadow-sm">Escala tu capacidad operativa.</h2>
-    <p className="text-gray-800 font-medium bg-white/40 px-3 py-1.5 rounded-lg backdrop-blur-sm">Publica un proyecto y el pipeline conecta tu empresa con el talento ideal en minutos.</p>
-    <div className="grid grid-cols-2 gap-3">
+    
+    <h2 className="text-5xl font-black text-gray-900 drop-shadow-sm leading-tight">Escala tu<br/>capacidad<br/>operativa.</h2>
+    <p className="text-gray-800 font-medium text-lg bg-white/50 border border-white/40 px-5 py-3 rounded-xl backdrop-blur-xl shadow-lg shadow-black/5">Publica un proyecto y el pipeline conecta tu empresa con el talento ideal en minutos.</p>
+    
+    <div className="grid grid-cols-2 gap-4 mt-2">
       {[['3x', 'Velocidad de contratación'], ['100%', 'Talento verificado']].map(([n, l]) => (
-        <div key={l} className="p-4 rounded-2xl bg-white/80 border border-indigo-100 shadow-lg backdrop-blur-md">
-          <div className="text-3xl font-black text-indigo-700 mb-0.5">{n}</div>
-          <div className="text-xs font-bold text-gray-600">{l}</div>
-        </div>
+        <motion.div whileHover={{ y: -5 }} key={l} className="p-6 rounded-3xl bg-white/70 border border-white/60 shadow-xl shadow-black/5 backdrop-blur-xl flex flex-col justify-center items-center text-center">
+          <div className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-indigo-600 to-purple-600 mb-2">{n}</div>
+          <div className="text-sm font-bold text-gray-700 leading-tight">{l}</div>
+        </motion.div>
       ))}
     </div>
-    <div className="p-4 rounded-2xl bg-white border border-gray-200 shadow-xl relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-100 rounded-full blur-2xl" />
-      <div className="relative z-10">
-        <div className="text-xs font-bold text-indigo-600 mb-1">SISTEMA ACTIVO</div>
-        <div className="text-gray-900 font-black">Enterprise Ready</div>
-        <div className="text-gray-600 font-medium text-sm mt-1">Acuerdos inteligentes · Pagos garantizados · Auditoría</div>
+    
+    <motion.div whileHover={{ scale: 1.02 }} className="p-5 rounded-2xl bg-gray-900 border border-gray-700 shadow-2xl relative overflow-hidden mt-2">
+      <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/20 rounded-full blur-2xl" />
+      <div className="relative z-10 flex items-start gap-4">
+        <ShieldCheck className="w-8 h-8 text-indigo-400 shrink-0" />
+        <div>
+          <div className="text-xs font-bold text-indigo-400 mb-1 tracking-wider uppercase">SISTEMA ACTIVO</div>
+          <div className="text-white font-black text-xl">Enterprise Ready</div>
+          <div className="text-gray-400 font-medium text-sm mt-1">Acuerdos inteligentes · Pagos en Escrow · Auditoría 24/7</div>
+        </div>
       </div>
-    </div>
-    <button onClick={() => scrollTo('auth')}
-      className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-full shadow-xl shadow-indigo-600/30 transition w-fit">
-      Publicar proyecto →
-    </button>
+    </motion.div>
+
+    <motion.button 
+      whileHover={{ scale: 1.03, y: -2 }}
+      whileTap={{ scale: 0.97 }}
+      onClick={() => scrollTo('auth')}
+      className="mt-2 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl shadow-2xl shadow-indigo-600/30 transition-all w-fit flex items-center gap-2"
+    >
+      Publicar proyecto <ArrowRight className="w-5 h-5" />
+    </motion.button>
   </motion.div>
 );
 
@@ -135,35 +176,48 @@ const CompaniesPanel = () => (
 ───────────────────────────────────────────── */
 const FreelancersPanel = () => (
   <motion.div
-    initial={{ opacity: 0, x: -40, scale: 0.9 }}
+    initial={{ opacity: 0, x: -40, scale: 0.95 }}
     animate={{ opacity: 1, x: 0, scale: 1 }}
-    exit={{ opacity: 0, x: -40, scale: 0.9 }}
-    transition={{ duration: 0.5, ease: 'easeOut' }}
-    style={{ width: '460px', maxWidth: '88vw', pointerEvents: 'auto' }}
-    className="flex flex-col gap-5 select-none"
+    exit={{ opacity: 0, x: -40, scale: 0.95 }}
+    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+    style={{ width: '480px', maxWidth: '88vw', pointerEvents: 'auto' }}
+    className="flex flex-col gap-6 select-none relative"
   >
-    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 border border-emerald-200 w-fit shadow-sm">
-      <span className="w-2 h-2 rounded-full bg-emerald-600" />
+    <div className="absolute -inset-32 bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
+
+    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100/80 border border-emerald-200/50 backdrop-blur-md w-fit shadow-sm">
+      <TerminalSquare className="w-3.5 h-3.5 text-emerald-700" />
       <span className="text-xs font-bold text-emerald-800 tracking-widest uppercase">CLUSTER · TALENTO</span>
     </div>
-    <h2 className="text-4xl font-black text-gray-900 drop-shadow-sm">Construye reputación<br />con código real.</h2>
-    <p className="text-gray-800 font-medium leading-relaxed bg-white/40 px-3 py-1.5 rounded-lg backdrop-blur-sm">Tu nodo crece con cada proyecto completado. Más conexiones, más visibilidad.</p>
-    <ul className="space-y-3">
-      {['Proyectos top tier garantizados', 'Pagos en escrow — cobras siempre', 'Reputación on-chain verificable'].map(item => (
-        <li key={item} className="flex items-center gap-3 bg-white/70 p-2 rounded-lg backdrop-blur-sm shadow-sm border border-white/50">
-          <div className="w-6 h-6 rounded-full bg-emerald-100 border border-emerald-200 flex items-center justify-center shrink-0">
-            <svg className="w-3.5 h-3.5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-            </svg>
+    
+    <h2 className="text-5xl font-black text-gray-900 drop-shadow-sm leading-tight">Construye<br/>reputación<br/>con código real.</h2>
+    <p className="text-gray-800 font-medium text-lg leading-relaxed bg-white/50 border border-white/40 px-5 py-3 rounded-xl backdrop-blur-xl shadow-lg shadow-black/5">
+      Tu nodo crece con cada proyecto completado. Más conexiones, más visibilidad.
+    </p>
+    
+    <ul className="space-y-4 mt-2">
+      {['Proyectos top tier de startups YC', 'Pagos en escrow — cobras siempre', 'Reputación on-chain verificable'].map((item, i) => (
+        <motion.li 
+          key={item} 
+          initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 + 0.2 }}
+          className="flex items-center gap-4 bg-white/70 p-4 rounded-2xl backdrop-blur-xl shadow-lg shadow-black/5 border border-white/60"
+        >
+          <div className="w-8 h-8 rounded-full bg-emerald-100 border border-emerald-200 flex items-center justify-center shrink-0 shadow-inner">
+            <CheckCircle2 className="w-5 h-5 text-emerald-600" />
           </div>
-          <span className="text-gray-800 font-bold text-sm">{item}</span>
-        </li>
+          <span className="text-gray-900 font-bold text-base">{item}</span>
+        </motion.li>
       ))}
     </ul>
-    <button onClick={() => scrollTo('auth')}
-      className="px-8 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-full shadow-xl shadow-emerald-600/30 transition w-fit">
-      Unirme a la red →
-    </button>
+    
+    <motion.button 
+      whileHover={{ scale: 1.03, y: -2 }}
+      whileTap={{ scale: 0.97 }}
+      onClick={() => scrollTo('auth')}
+      className="mt-2 px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl shadow-2xl shadow-emerald-600/30 transition-all w-fit flex items-center gap-2"
+    >
+      Unirme a la red <ArrowRight className="w-5 h-5" />
+    </motion.button>
   </motion.div>
 );
 
@@ -176,27 +230,31 @@ const AuthPanel = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.85 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.85 }}
-      transition={{ duration: 0.5, ease: 'easeOut' }}
-      style={{ width: '420px', maxWidth: '92vw', pointerEvents: 'auto' }}
-      className="select-none"
+      initial={{ opacity: 0, scale: 0.9, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.9, y: -20 }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      style={{ width: '440px', maxWidth: '92vw', pointerEvents: 'auto' }}
+      className="select-none relative"
     >
-      <div className="bg-gray-900/90 backdrop-blur-2xl border border-white/10 shadow-2xl shadow-black/60 rounded-3xl p-7 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent pointer-events-none" />
-        <div className="absolute -top-12 -right-12 w-36 h-36 bg-indigo-600/10 rounded-full blur-3xl" />
+      {/* Premium Glow Behind the Auth Box */}
+      <div className="absolute -inset-10 bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none" />
+
+      <div className="bg-gray-900/80 backdrop-blur-3xl border border-white/20 shadow-2xl shadow-black/80 rounded-[2rem] p-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-purple-500/10 pointer-events-none" />
+        <div className="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
+        
         <div className="relative z-10">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-white mb-1">Acceso a Prowork</h2>
-            <p className="text-sm text-gray-500">Únete a la red de talento y empresas de élite.</p>
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-black text-white mb-2 tracking-tight">Acceso a Prowork</h2>
+            <p className="text-base text-gray-400">Únete a la red de talento y empresas de élite.</p>
           </div>
 
-          <div className="flex p-1 bg-gray-800/80 rounded-lg mb-6 relative">
-            <div className={`absolute inset-y-1 w-1/2 bg-gray-700 rounded-md shadow transition-transform duration-300 ${mode === 'register' ? 'translate-x-[calc(100%-4px)]' : 'translate-x-0'}`} />
+          <div className="flex p-1.5 bg-gray-950/50 border border-white/10 rounded-2xl mb-8 relative shadow-inner">
+            <div className={`absolute inset-y-1.5 w-[calc(50%-6px)] bg-gray-800 border border-white/10 rounded-xl shadow-lg transition-transform duration-300 ease-out ${mode === 'register' ? 'translate-x-[calc(100%+6px)]' : 'translate-x-0'}`} />
             {(['login', 'register'] as const).map(m => (
               <button key={m} onClick={() => setMode(m)}
-                className={`flex-1 py-2 text-sm font-medium z-10 transition-colors ${mode === m ? 'text-white' : 'text-gray-500'}`}>
+                className={`flex-1 py-2.5 text-sm font-bold z-10 transition-colors ${mode === m ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}>
                 {m === 'login' ? 'Iniciar Sesión' : 'Registrarse'}
               </button>
             ))}
@@ -205,47 +263,49 @@ const AuthPanel = () => {
           <AnimatePresence mode="wait">
             {mode === 'login' ? (
               <motion.form key="login"
-                initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 15 }}
-                transition={{ duration: 0.2 }}
+                initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
                 onSubmit={e => e.preventDefault()}
-                className="flex flex-col gap-3"
+                className="flex flex-col gap-4"
               >
                 <input type="email" placeholder="Correo electrónico" autoComplete="email"
-                  className="w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm transition" />
+                  className="w-full px-5 py-4 rounded-2xl bg-gray-950/50 border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-base transition-all shadow-inner" />
                 <input type="password" placeholder="Contraseña" autoComplete="current-password"
-                  className="w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm transition" />
-                <button type="submit" className="w-full mt-1 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold text-sm shadow-lg transition">
+                  className="w-full px-5 py-4 rounded-2xl bg-gray-950/50 border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-base transition-all shadow-inner" />
+                <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} type="submit" 
+                  className="w-full mt-2 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-bold text-base shadow-xl shadow-indigo-600/20 transition-colors">
                   Entrar al sistema
-                </button>
+                </motion.button>
               </motion.form>
             ) : (
               <motion.form key="register"
-                initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -15 }}
-                transition={{ duration: 0.2 }}
+                initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
                 onSubmit={e => e.preventDefault()}
-                className="flex flex-col gap-3"
+                className="flex flex-col gap-4"
               >
-                <div className="grid grid-cols-2 gap-2 mb-1">
+                <div className="grid grid-cols-2 gap-3 mb-2">
                   {(['empresa', 'freelancer'] as const).map(r => (
                     <button key={r} type="button" onClick={() => setRole(r)}
-                      className={`py-3 rounded-xl border text-sm font-medium transition ${role === r
-                          ? r === 'empresa' ? 'border-indigo-500 bg-indigo-500/10 text-indigo-300' : 'border-emerald-500 bg-emerald-500/10 text-emerald-300'
-                          : 'border-white/10 text-gray-500 hover:border-white/20 hover:text-gray-400'
+                      className={`py-4 rounded-2xl border text-sm font-bold transition-all flex flex-col items-center gap-2 ${role === r
+                          ? r === 'empresa' ? 'border-indigo-500 bg-indigo-500/20 text-indigo-300 shadow-inner' : 'border-emerald-500 bg-emerald-500/20 text-emerald-300 shadow-inner'
+                          : 'border-white/10 bg-gray-950/30 text-gray-500 hover:border-white/30 hover:text-gray-300'
                         }`}>
-                      {r === 'empresa' ? '🏢 Empresa' : '💻 Freelancer'}
+                      {r === 'empresa' ? <Building2 className="w-5 h-5"/> : <TerminalSquare className="w-5 h-5"/>}
+                      {r === 'empresa' ? 'Empresa' : 'Freelancer'}
                     </button>
                   ))}
                 </div>
                 <input type="text" placeholder="Nombre completo"
-                  className="w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition" />
+                  className="w-full px-5 py-4 rounded-2xl bg-gray-950/50 border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 outline-none text-base transition-all shadow-inner" />
                 <input type="email" placeholder="Correo electrónico" autoComplete="email"
-                  className="w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition" />
+                  className="w-full px-5 py-4 rounded-2xl bg-gray-950/50 border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 outline-none text-base transition-all shadow-inner" />
                 <input type="password" placeholder="Contraseña" autoComplete="new-password"
-                  className="w-full px-4 py-2.5 rounded-xl bg-gray-800 border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition" />
-                <button type="submit" disabled={!role}
-                  className="w-full mt-1 py-3 bg-indigo-600 disabled:bg-gray-700 disabled:text-gray-500 hover:bg-indigo-500 text-white rounded-xl font-semibold text-sm shadow-lg transition">
+                  className="w-full px-5 py-4 rounded-2xl bg-gray-950/50 border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 outline-none text-base transition-all shadow-inner" />
+                <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} type="submit" disabled={!role}
+                  className="w-full mt-2 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 disabled:from-gray-800 disabled:to-gray-800 disabled:text-gray-500 hover:from-indigo-500 hover:to-purple-500 text-white rounded-2xl font-bold text-base shadow-xl shadow-indigo-600/20 transition-all">
                   Crear cuenta
-                </button>
+                </motion.button>
               </motion.form>
             )}
           </AnimatePresence>

@@ -18,7 +18,15 @@ export const Navbar = () => {
   const handleScroll = (id: string) => {
     setIsMobileMenuOpen(false);
     const element = document.getElementById(id);
-    if (element) element.scrollIntoView({ behavior: 'smooth' });
+    if (element) {
+      if ((window as any).lenis) {
+        // Usa Lenis para el auto-scroll (esto evita que se rompa con Spline)
+        (window as any).lenis.scrollTo(element, { duration: 1.5 });
+      } else {
+        // Fallback nativo
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
   };
 
   return (
