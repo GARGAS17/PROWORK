@@ -4,6 +4,11 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 
 import { LandingPage } from './features/landing/pages/LandingPage';
 
+import { DashboardLayout } from './features/dashboard/layout/DashboardLayout';
+import { FreelancerDashboard } from './features/dashboard/pages/FreelancerDashboard';
+import { EmpresaDashboard } from './features/dashboard/pages/EmpresaDashboard';
+import { AdminDashboard } from './features/dashboard/pages/AdminDashboard';
+
 function App() {
   return (
     <AuthProvider>
@@ -20,23 +25,35 @@ function App() {
           {/* RUTAS FREELANCER */}
           {/* ========================================== */}
           <Route element={<ProtectedRoute allowedRoles={['freelancer']} />}>
-            <Route path="/feed" element={<div className="p-10 text-2xl text-green-700 font-bold">Feed de Proyectos (Freelancer)</div>} />
-            <Route path="/mis-postulaciones" element={<div className="p-10 text-2xl text-green-700 font-bold">Mis Postulaciones</div>} />
+            <Route path="/freelancer" element={<DashboardLayout />}>
+              <Route index element={<FreelancerDashboard />} />
+              <Route path="postulaciones" element={<div className="p-10 text-2xl font-bold dark:text-white">Mis Postulaciones</div>} />
+              <Route path="settings" element={<div className="p-10 text-2xl font-bold dark:text-white">Configuración</div>} />
+            </Route>
           </Route>
 
           {/* ========================================== */}
           {/* RUTAS EMPRESA */}
           {/* ========================================== */}
           <Route element={<ProtectedRoute allowedRoles={['empresa']} />}>
-            <Route path="/mis-proyectos" element={<div className="p-10 text-2xl text-indigo-700 font-bold">Mis Ofertas Publicadas (Empresa)</div>} />
-            <Route path="/crear-proyecto" element={<div className="p-10 text-2xl text-indigo-700 font-bold">Crear Nueva Oferta</div>} />
+            <Route path="/empresa" element={<DashboardLayout />}>
+              <Route index element={<EmpresaDashboard />} />
+              <Route path="crear" element={<div className="p-10 text-2xl font-bold dark:text-white">Crear Nueva Oferta</div>} />
+              <Route path="talento" element={<div className="p-10 text-2xl font-bold dark:text-white">Talento Guardado</div>} />
+              <Route path="settings" element={<div className="p-10 text-2xl font-bold dark:text-white">Configuración</div>} />
+            </Route>
           </Route>
 
           {/* ========================================== */}
           {/* RUTAS ADMINISTRADOR */}
           {/* ========================================== */}
           <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-            <Route path="/admin/dashboard" element={<div className="p-10 text-2xl text-red-600 font-bold">Panel de Curaduría Global (Admin)</div>} />
+            <Route path="/admin" element={<DashboardLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="proyectos" element={<div className="p-10 text-2xl font-bold dark:text-white">Curaduría de Proyectos</div>} />
+              <Route path="usuarios" element={<div className="p-10 text-2xl font-bold dark:text-white">Gestión de Usuarios</div>} />
+              <Route path="alertas" element={<div className="p-10 text-2xl font-bold dark:text-white">Reportes y Alertas</div>} />
+            </Route>
           </Route>
 
           {/* Fallback de error 404 */}

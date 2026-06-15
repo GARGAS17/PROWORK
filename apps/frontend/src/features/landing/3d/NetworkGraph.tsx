@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useActiveSection } from '../hooks/useActiveSection';
-import { Sparkles, ArrowRight, Server, ShieldCheck, Zap, Briefcase, Building2, TerminalSquare, CheckCircle2 } from 'lucide-react';
+import { Sparkles, ArrowRight, Server, ShieldCheck, Zap, Briefcase, Building2, TerminalSquare, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthContext';
 
 /* ─────────────────────────────────────────────
    FLYWEIGHT CONFIGURATIONS (Intrinsic State)
@@ -12,19 +14,19 @@ const FW_ANIM = {
     initial: { opacity: 0, scale: 0.95, y: 15 },
     animate: { opacity: 1, scale: 1, y: 0 },
     exit: { opacity: 0, scale: 0.95, y: -15 },
-    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] }
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const }
   },
   panelSlide: {
     initial: { opacity: 0, x: -40, scale: 0.95 },
     animate: { opacity: 1, x: 0, scale: 1 },
     exit: { opacity: 0, x: -40, scale: 0.95 },
-    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const }
   },
   authSpring: {
-    initial: { opacity: 0, scale: 0.9, y: 20 },
+    initial: { opacity: 0, scale: 0.95, y: 15 },
     animate: { opacity: 1, scale: 1, y: 0 },
-    exit: { opacity: 0, scale: 0.9, y: -20 },
-    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
+    exit: { opacity: 0, scale: 0.95, y: -15 },
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const }
   },
   hoverButton: {
     whileHover: { scale: 1.03, y: -2 },
@@ -273,6 +275,72 @@ const FreelancersPanel = () => (
 const AuthPanel = () => {
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [role, setRole] = useState<'empresa' | 'freelancer' | null>(null);
+  
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg('');
+    setIsLoading(true);
+
+    try {
+      const endpoint = mode === 'login' ? '/api/auth/login' : '/api/auth/register';
+      const body = mode === 'login' 
+        ? { email, password } 
+        : { email, password, name, role };
+
+      const res = await fetch(`http://localhost:3000${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        let errorMessage = data.error || data.message || 'Error en la autenticación';
+        
+        // Manejar formato de errores de Zod
+        if (data.errors) {
+           const fieldErrors = Object.entries(data.errors)
+             .filter(([key]) => key !== '_errors')
+             .map(([key, val]: any) => val._errors?.join(', '));
+           
+           if (fieldErrors.length > 0) {
+             errorMessage = fieldErrors.join(' | ');
+           }
+        }
+        
+        throw new Error(errorMessage);
+      }
+
+      // data.data has the returned user from backend based on AuthController format
+      // Wait, AuthController returns { message: '...', data: { user, token } }
+      const token = data.data.token;
+      const user = data.data.user;
+
+      login(token, user);
+
+      // Redirección por rol
+      if (user.role === 'admin') navigate('/admin');
+      else if (user.role === 'empresa') navigate('/empresa');
+      else if (user.role === 'freelancer') navigate('/freelancer');
+      else navigate('/');
+
+    } catch (err: any) {
+      setErrorMsg(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <motion.div
@@ -280,7 +348,6 @@ const AuthPanel = () => {
       style={{ width: '440px', maxWidth: '92vw', pointerEvents: 'auto' }}
       className="select-none relative"
     >
-      {/* Premium Glow Behind the Auth Box */}
       <div className="absolute -inset-10 bg-indigo-600/20 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="bg-gray-900/80 backdrop-blur-3xl border border-white/20 shadow-2xl shadow-black/80 rounded-[2rem] p-8 relative overflow-hidden">
@@ -293,38 +360,47 @@ const AuthPanel = () => {
             <p className="text-base text-gray-400">Únete a la red de talento y empresas de élite.</p>
           </div>
 
-          <div className="flex p-1.5 bg-gray-950/50 border border-white/10 rounded-2xl mb-8 relative shadow-inner">
+          <div className="flex p-1.5 bg-gray-950/50 border border-white/10 rounded-2xl mb-6 relative shadow-inner">
             <div className={`absolute inset-y-1.5 w-[calc(50%-6px)] bg-gray-800 border border-white/10 rounded-xl shadow-lg transition-transform duration-300 ease-out ${mode === 'register' ? 'translate-x-[calc(100%+6px)]' : 'translate-x-0'}`} />
             {(['login', 'register'] as const).map(m => (
-              <button key={m} onClick={() => setMode(m)}
+              <button key={m} onClick={() => { setMode(m); setErrorMsg(''); }}
                 className={`flex-1 py-2.5 text-sm font-bold z-10 transition-colors ${mode === m ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}>
                 {m === 'login' ? 'Iniciar Sesión' : 'Registrarse'}
               </button>
             ))}
           </div>
 
+          {errorMsg && (
+            <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 flex items-start gap-2 text-red-400">
+              <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+              <span className="text-sm font-medium">{errorMsg}</span>
+            </div>
+          )}
+
           <AnimatePresence mode="wait">
             {mode === 'login' ? (
               <motion.form key="login"
                 initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
                 transition={{ duration: 0.3, ease: 'easeOut' }}
-                onSubmit={e => e.preventDefault()}
+                onSubmit={handleSubmit}
                 className="flex flex-col gap-4"
               >
-                <input type="email" placeholder="Correo electrónico" autoComplete="email"
+                <input type="email" placeholder="Correo electrónico" autoComplete="email" required
+                  value={email} onChange={e => setEmail(e.target.value)}
                   className="w-full px-5 py-4 rounded-2xl bg-gray-950/50 border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-base transition-all shadow-inner" />
-                <input type="password" placeholder="Contraseña" autoComplete="current-password"
+                <input type="password" placeholder="Contraseña" autoComplete="current-password" required
+                  value={password} onChange={e => setPassword(e.target.value)}
                   className="w-full px-5 py-4 rounded-2xl bg-gray-950/50 border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-base transition-all shadow-inner" />
-                <motion.button {...FW_ANIM.hoverButton} type="submit" 
-                  className="w-full mt-2 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-bold text-base shadow-xl shadow-indigo-600/20 transition-colors">
-                  Entrar al sistema
+                <motion.button {...FW_ANIM.hoverButton} type="submit" disabled={isLoading}
+                  className="w-full mt-2 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-bold text-base shadow-xl shadow-indigo-600/20 transition-colors disabled:opacity-50 flex justify-center items-center gap-2">
+                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Entrar al sistema'}
                 </motion.button>
               </motion.form>
             ) : (
               <motion.form key="register"
                 initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3, ease: 'easeOut' }}
-                onSubmit={e => e.preventDefault()}
+                onSubmit={handleSubmit}
                 className="flex flex-col gap-4"
               >
                 <div className="grid grid-cols-2 gap-3 mb-2">
@@ -339,15 +415,18 @@ const AuthPanel = () => {
                     </button>
                   ))}
                 </div>
-                <input type="text" placeholder="Nombre completo"
+                <input type="text" placeholder="Nombre completo" required
+                  value={name} onChange={e => setName(e.target.value)}
                   className="w-full px-5 py-4 rounded-2xl bg-gray-950/50 border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 outline-none text-base transition-all shadow-inner" />
-                <input type="email" placeholder="Correo electrónico" autoComplete="email"
+                <input type="email" placeholder="Correo electrónico" autoComplete="email" required
+                  value={email} onChange={e => setEmail(e.target.value)}
                   className="w-full px-5 py-4 rounded-2xl bg-gray-950/50 border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 outline-none text-base transition-all shadow-inner" />
-                <input type="password" placeholder="Contraseña" autoComplete="new-password"
+                <input type="password" placeholder="Contraseña" autoComplete="new-password" required
+                  value={password} onChange={e => setPassword(e.target.value)}
                   className="w-full px-5 py-4 rounded-2xl bg-gray-950/50 border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 outline-none text-base transition-all shadow-inner" />
-                <motion.button {...FW_ANIM.hoverButton} type="submit" disabled={!role}
-                  className="w-full mt-2 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 disabled:from-gray-800 disabled:to-gray-800 disabled:text-gray-500 hover:from-indigo-500 hover:to-purple-500 text-white rounded-2xl font-bold text-base shadow-xl shadow-indigo-600/20 transition-all">
-                  Crear cuenta
+                <motion.button {...FW_ANIM.hoverButton} type="submit" disabled={!role || isLoading}
+                  className="w-full mt-2 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 disabled:from-gray-800 disabled:to-gray-800 disabled:text-gray-500 hover:from-indigo-500 hover:to-purple-500 text-white rounded-2xl font-bold text-base shadow-xl shadow-indigo-600/20 transition-all flex justify-center items-center gap-2">
+                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Crear cuenta'}
                 </motion.button>
               </motion.form>
             )}
