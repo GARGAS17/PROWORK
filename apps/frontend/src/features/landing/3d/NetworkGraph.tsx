@@ -4,6 +4,83 @@ import { useActiveSection } from '../hooks/useActiveSection';
 import { Sparkles, ArrowRight, Server, ShieldCheck, Zap, Briefcase, Building2, TerminalSquare, CheckCircle2 } from 'lucide-react';
 
 /* ─────────────────────────────────────────────
+   FLYWEIGHT CONFIGURATIONS (Intrinsic State)
+   Shared memory references to prevent GC overhead
+───────────────────────────────────────────── */
+const FW_ANIM = {
+  panelSpring: {
+    initial: { opacity: 0, scale: 0.95, y: 15 },
+    animate: { opacity: 1, scale: 1, y: 0 },
+    exit: { opacity: 0, scale: 0.95, y: -15 },
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] }
+  },
+  panelSlide: {
+    initial: { opacity: 0, x: -40, scale: 0.95 },
+    animate: { opacity: 1, x: 0, scale: 1 },
+    exit: { opacity: 0, x: -40, scale: 0.95 },
+    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
+  },
+  authSpring: {
+    initial: { opacity: 0, scale: 0.9, y: 20 },
+    animate: { opacity: 1, scale: 1, y: 0 },
+    exit: { opacity: 0, scale: 0.9, y: -20 },
+    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
+  },
+  hoverButton: {
+    whileHover: { scale: 1.03, y: -2 },
+    whileTap: { scale: 0.97 }
+  },
+  itemSlideUp: {
+    initial: { opacity: 0, x: -20 },
+    animate: { opacity: 1, x: 0 }
+  }
+};
+
+const FW_DATA = {
+  heroTags: [
+    { color: 'text-indigo-600', label: 'Empresa', icon: Building2 },
+    { color: 'text-emerald-600', label: 'Talento', icon: TerminalSquare },
+    { color: 'text-amber-500', label: 'Proyecto', icon: Briefcase },
+    { color: 'text-cyan-600', label: 'IA', icon: Zap }
+  ],
+  pipelineNodes: [
+    { color: 'from-indigo-500/10 to-transparent border-indigo-200', icon: Building2, iconColor: 'text-indigo-600', bg: 'bg-indigo-100', title: 'La Empresa Publica', desc: 'El nodo empresa emite una señal al núcleo de IA con los requisitos del proyecto.' },
+    { color: 'from-cyan-500/10 to-transparent border-cyan-200', icon: Zap, iconColor: 'text-cyan-600', bg: 'bg-cyan-100', title: 'Prowork IA Valida', desc: 'El hub central procesa candidatos. Solo los nodos con fit ≥ 90% reciben el flujo de datos.' },
+    { color: 'from-emerald-500/10 to-transparent border-emerald-200', icon: TerminalSquare, iconColor: 'text-emerald-600', bg: 'bg-emerald-100', title: 'El Talento Ejecuta', desc: 'La conexión se establece. El nodo de proyecto se activa y el trabajo comienza.' },
+  ],
+  companyMetrics: [
+    { val: '3x', label: 'Velocidad de contratación' },
+    { val: '100%', label: 'Talento verificado' }
+  ],
+  freelanceBenefits: [
+    'Proyectos top tier de startups YC',
+    'Pagos en escrow — cobras siempre',
+    'Reputación on-chain verificable'
+  ]
+};
+
+/* ─────────────────────────────────────────────
+   FLYWEIGHT COMPONENT (Structural Sharing)
+───────────────────────────────────────────── */
+const PipelineNode = ({ s, i }: { s: any; i: number }) => (
+  <motion.div
+    initial={FW_ANIM.itemSlideUp.initial}
+    animate={FW_ANIM.itemSlideUp.animate}
+    transition={{ delay: i * 0.15 + 0.2 }}
+    whileHover={{ x: 5, scale: 1.02 }}
+    className={`flex gap-5 p-5 rounded-2xl bg-gradient-to-r bg-white/70 ${s.color} border backdrop-blur-xl shadow-xl shadow-black/5 cursor-default`}
+  >
+    <div className={`w-12 h-12 rounded-xl ${s.bg} border border-white/60 shadow-inner flex items-center justify-center shrink-0`}>
+      <s.icon className={`w-6 h-6 ${s.iconColor}`} />
+    </div>
+    <div>
+      <div className="font-bold text-gray-900 text-lg mb-1">{s.title}</div>
+      <div className="text-gray-700 font-medium text-sm leading-relaxed">{s.desc}</div>
+    </div>
+  </motion.div>
+);
+
+/* ─────────────────────────────────────────────
    SCROLL HELPER
 ───────────────────────────────────────────── */
 const scrollTo = (id: string) =>
@@ -14,10 +91,7 @@ const scrollTo = (id: string) =>
 ───────────────────────────────────────────── */
 const HeroPanel = () => (
   <motion.div
-    initial={{ opacity: 0, scale: 0.95, y: 15 }}
-    animate={{ opacity: 1, scale: 1, y: 0 }}
-    exit={{ opacity: 0, scale: 0.95, y: -15 }}
-    transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }} // smooth spring
+    {...FW_ANIM.panelSpring}
     style={{ width: '600px', maxWidth: '92vw', pointerEvents: 'auto' }}
     className="flex flex-col items-start gap-6 select-none relative"
   >
@@ -42,25 +116,23 @@ const HeroPanel = () => (
     </p>
 
     <div className="flex flex-wrap items-center gap-4 text-sm text-gray-800 font-bold mt-2">
-      {[['text-indigo-600', 'Empresa', Building2], ['text-emerald-600', 'Talento', TerminalSquare], ['text-amber-500', 'Proyecto', Briefcase], ['text-cyan-600', 'IA', Zap]].map(([c, l, Icon]) => (
-        <span key={l as string} className="flex items-center gap-1.5 bg-white/50 px-4 py-2 rounded-xl backdrop-blur-md border border-white/40 shadow-sm">
-          <Icon className={`w-4 h-4 ${c}`} />{l as string}
+      {FW_DATA.heroTags.map(({color, label, icon: Icon}) => (
+        <span key={label} className="flex items-center gap-1.5 bg-white/50 px-4 py-2 rounded-xl backdrop-blur-md border border-white/40 shadow-sm">
+          <Icon className={`w-4 h-4 ${color}`} />{label}
         </span>
       ))}
     </div>
 
     <div className="flex flex-col sm:flex-row items-center gap-4 mt-4">
       <motion.button 
-        whileHover={{ scale: 1.03, y: -2 }}
-        whileTap={{ scale: 0.97 }}
+        {...FW_ANIM.hoverButton}
         onClick={() => scrollTo('auth')}
         className="flex items-center gap-2 px-8 py-4 bg-gray-900 hover:bg-gray-800 text-white font-bold rounded-2xl shadow-2xl shadow-gray-900/20 transition-all border border-gray-700"
       >
         Comenzar ahora <ArrowRight className="w-5 h-5" />
       </motion.button>
       <motion.button 
-        whileHover={{ scale: 1.03, y: -2 }}
-        whileTap={{ scale: 0.97 }}
+        {...FW_ANIM.hoverButton}
         onClick={() => scrollTo('how-it-works')}
         className="px-8 py-4 text-gray-900 font-bold bg-white/60 hover:bg-white/80 border border-white/60 rounded-2xl shadow-xl shadow-black/5 backdrop-blur-xl transition-all"
       >
@@ -75,10 +147,7 @@ const HeroPanel = () => (
 ───────────────────────────────────────────── */
 const HowItWorksPanel = () => (
   <motion.div
-    initial={{ opacity: 0, x: -40, scale: 0.95 }}
-    animate={{ opacity: 1, x: 0, scale: 1 }}
-    exit={{ opacity: 0, x: -40, scale: 0.95 }}
-    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+    {...FW_ANIM.panelSlide}
     style={{ width: '500px', maxWidth: '88vw', pointerEvents: 'auto' }}
     className="flex flex-col gap-6 select-none relative"
   >
@@ -93,25 +162,8 @@ const HowItWorksPanel = () => (
     <p className="text-gray-800 font-medium text-lg bg-white/50 border border-white/40 px-5 py-3 rounded-xl backdrop-blur-xl w-fit shadow-lg shadow-black/5">Sin emails. Sin esperas. Cada conexión es un evento real.</p>
     
     <div className="flex flex-col gap-4 mt-2">
-      {[
-        { color: 'from-indigo-500/10 to-transparent border-indigo-200', icon: Building2, iconColor: 'text-indigo-600', bg: 'bg-indigo-100', title: 'La Empresa Publica', desc: 'El nodo empresa emite una señal al núcleo de IA con los requisitos del proyecto.' },
-        { color: 'from-cyan-500/10 to-transparent border-cyan-200', icon: Zap, iconColor: 'text-cyan-600', bg: 'bg-cyan-100', title: 'Prowork IA Valida', desc: 'El hub central procesa candidatos. Solo los nodos con fit ≥ 90% reciben el flujo de datos.' },
-        { color: 'from-emerald-500/10 to-transparent border-emerald-200', icon: TerminalSquare, iconColor: 'text-emerald-600', bg: 'bg-emerald-100', title: 'El Talento Ejecuta', desc: 'La conexión se establece. El nodo de proyecto se activa y el trabajo comienza.' },
-      ].map((s, i) => (
-        <motion.div key={i}
-          initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: i * 0.15 + 0.2 }}
-          whileHover={{ x: 5, scale: 1.02 }}
-          className={`flex gap-5 p-5 rounded-2xl bg-gradient-to-r bg-white/70 ${s.color} border backdrop-blur-xl shadow-xl shadow-black/5 cursor-default`}
-        >
-          <div className={`w-12 h-12 rounded-xl ${s.bg} border border-white/60 shadow-inner flex items-center justify-center shrink-0`}>
-            <s.icon className={`w-6 h-6 ${s.iconColor}`} />
-          </div>
-          <div>
-            <div className="font-bold text-gray-900 text-lg mb-1">{s.title}</div>
-            <div className="text-gray-700 font-medium text-sm leading-relaxed">{s.desc}</div>
-          </div>
-        </motion.div>
+      {FW_DATA.pipelineNodes.map((s, i) => (
+        <PipelineNode key={s.title} s={s} i={i} />
       ))}
     </div>
   </motion.div>
@@ -122,10 +174,7 @@ const HowItWorksPanel = () => (
 ───────────────────────────────────────────── */
 const CompaniesPanel = () => (
   <motion.div
-    initial={{ opacity: 0, x: -40, scale: 0.95 }}
-    animate={{ opacity: 1, x: 0, scale: 1 }}
-    exit={{ opacity: 0, x: -40, scale: 0.95 }}
-    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+    {...FW_ANIM.panelSlide}
     style={{ width: '480px', maxWidth: '88vw', pointerEvents: 'auto' }}
     className="flex flex-col gap-6 select-none relative"
   >
@@ -140,10 +189,10 @@ const CompaniesPanel = () => (
     <p className="text-gray-800 font-medium text-lg bg-white/50 border border-white/40 px-5 py-3 rounded-xl backdrop-blur-xl shadow-lg shadow-black/5">Publica un proyecto y el pipeline conecta tu empresa con el talento ideal en minutos.</p>
     
     <div className="grid grid-cols-2 gap-4 mt-2">
-      {[['3x', 'Velocidad de contratación'], ['100%', 'Talento verificado']].map(([n, l]) => (
-        <motion.div whileHover={{ y: -5 }} key={l} className="p-6 rounded-3xl bg-white/70 border border-white/60 shadow-xl shadow-black/5 backdrop-blur-xl flex flex-col justify-center items-center text-center">
-          <div className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-indigo-600 to-purple-600 mb-2">{n}</div>
-          <div className="text-sm font-bold text-gray-700 leading-tight">{l}</div>
+      {FW_DATA.companyMetrics.map(({val, label}) => (
+        <motion.div whileHover={{ y: -5 }} key={label} className="p-6 rounded-3xl bg-white/70 border border-white/60 shadow-xl shadow-black/5 backdrop-blur-xl flex flex-col justify-center items-center text-center">
+          <div className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-indigo-600 to-purple-600 mb-2">{val}</div>
+          <div className="text-sm font-bold text-gray-700 leading-tight">{label}</div>
         </motion.div>
       ))}
     </div>
@@ -161,8 +210,7 @@ const CompaniesPanel = () => (
     </motion.div>
 
     <motion.button 
-      whileHover={{ scale: 1.03, y: -2 }}
-      whileTap={{ scale: 0.97 }}
+      {...FW_ANIM.hoverButton}
       onClick={() => scrollTo('auth')}
       className="mt-2 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl shadow-2xl shadow-indigo-600/30 transition-all w-fit flex items-center gap-2"
     >
@@ -176,10 +224,7 @@ const CompaniesPanel = () => (
 ───────────────────────────────────────────── */
 const FreelancersPanel = () => (
   <motion.div
-    initial={{ opacity: 0, x: -40, scale: 0.95 }}
-    animate={{ opacity: 1, x: 0, scale: 1 }}
-    exit={{ opacity: 0, x: -40, scale: 0.95 }}
-    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+    {...FW_ANIM.panelSlide}
     style={{ width: '480px', maxWidth: '88vw', pointerEvents: 'auto' }}
     className="flex flex-col gap-6 select-none relative"
   >
@@ -196,10 +241,12 @@ const FreelancersPanel = () => (
     </p>
     
     <ul className="space-y-4 mt-2">
-      {['Proyectos top tier de startups YC', 'Pagos en escrow — cobras siempre', 'Reputación on-chain verificable'].map((item, i) => (
+      {FW_DATA.freelanceBenefits.map((item, i) => (
         <motion.li 
           key={item} 
-          initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 + 0.2 }}
+          initial={FW_ANIM.itemSlideUp.initial} 
+          animate={FW_ANIM.itemSlideUp.animate} 
+          transition={{ delay: i * 0.1 + 0.2 }}
           className="flex items-center gap-4 bg-white/70 p-4 rounded-2xl backdrop-blur-xl shadow-lg shadow-black/5 border border-white/60"
         >
           <div className="w-8 h-8 rounded-full bg-emerald-100 border border-emerald-200 flex items-center justify-center shrink-0 shadow-inner">
@@ -211,8 +258,7 @@ const FreelancersPanel = () => (
     </ul>
     
     <motion.button 
-      whileHover={{ scale: 1.03, y: -2 }}
-      whileTap={{ scale: 0.97 }}
+      {...FW_ANIM.hoverButton}
       onClick={() => scrollTo('auth')}
       className="mt-2 px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl shadow-2xl shadow-emerald-600/30 transition-all w-fit flex items-center gap-2"
     >
@@ -230,10 +276,7 @@ const AuthPanel = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9, y: 20 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.9, y: -20 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      {...FW_ANIM.authSpring}
       style={{ width: '440px', maxWidth: '92vw', pointerEvents: 'auto' }}
       className="select-none relative"
     >
@@ -272,7 +315,7 @@ const AuthPanel = () => {
                   className="w-full px-5 py-4 rounded-2xl bg-gray-950/50 border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-base transition-all shadow-inner" />
                 <input type="password" placeholder="Contraseña" autoComplete="current-password"
                   className="w-full px-5 py-4 rounded-2xl bg-gray-950/50 border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-base transition-all shadow-inner" />
-                <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} type="submit" 
+                <motion.button {...FW_ANIM.hoverButton} type="submit" 
                   className="w-full mt-2 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-bold text-base shadow-xl shadow-indigo-600/20 transition-colors">
                   Entrar al sistema
                 </motion.button>
@@ -302,7 +345,7 @@ const AuthPanel = () => {
                   className="w-full px-5 py-4 rounded-2xl bg-gray-950/50 border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 outline-none text-base transition-all shadow-inner" />
                 <input type="password" placeholder="Contraseña" autoComplete="new-password"
                   className="w-full px-5 py-4 rounded-2xl bg-gray-950/50 border border-white/10 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 outline-none text-base transition-all shadow-inner" />
-                <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} type="submit" disabled={!role}
+                <motion.button {...FW_ANIM.hoverButton} type="submit" disabled={!role}
                   className="w-full mt-2 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 disabled:from-gray-800 disabled:to-gray-800 disabled:text-gray-500 hover:from-indigo-500 hover:to-purple-500 text-white rounded-2xl font-bold text-base shadow-xl shadow-indigo-600/20 transition-all">
                   Crear cuenta
                 </motion.button>
