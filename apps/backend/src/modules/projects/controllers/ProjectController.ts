@@ -6,6 +6,7 @@ const createProjectSchema = z.object({
   title: z.string().min(5, 'El título debe tener al menos 5 caracteres.'),
   description: z.string().min(20, 'La descripción debe tener al menos 20 caracteres.'),
   estimated_budget: z.number().positive('El presupuesto debe ser un número positivo.'),
+  currency: z.string().default('USD'),
   technologies: z.array(z.string()).min(1, 'Debe incluir al menos una tecnología.'),
 });
 
@@ -22,6 +23,7 @@ export class ProjectController {
         validatedData.title,
         validatedData.description,
         validatedData.estimated_budget,
+        validatedData.currency,
         validatedData.technologies
       );
 

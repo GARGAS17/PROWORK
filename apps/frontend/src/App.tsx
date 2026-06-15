@@ -8,6 +8,7 @@ import { DashboardLayout } from './features/dashboard/layout/DashboardLayout';
 import { FreelancerDashboard } from './features/dashboard/pages/FreelancerDashboard';
 import { EmpresaDashboard } from './features/dashboard/pages/EmpresaDashboard';
 import { AdminDashboard } from './features/dashboard/pages/AdminDashboard';
+import { CreateProjectPage } from './features/projects/pages/CreateProjectPage';
 
 function App() {
   return (
@@ -38,7 +39,7 @@ function App() {
           <Route element={<ProtectedRoute allowedRoles={['empresa']} />}>
             <Route path="/empresa" element={<DashboardLayout />}>
               <Route index element={<EmpresaDashboard />} />
-              <Route path="crear" element={<div className="p-10 text-2xl font-bold dark:text-white">Crear Nueva Oferta</div>} />
+              <Route path="crear" element={<CreateProjectPage />} />
               <Route path="talento" element={<div className="p-10 text-2xl font-bold dark:text-white">Talento Guardado</div>} />
               <Route path="settings" element={<div className="p-10 text-2xl font-bold dark:text-white">Configuración</div>} />
             </Route>

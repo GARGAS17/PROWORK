@@ -11,6 +11,7 @@ export interface Project {
   title: string;
   description: string;
   estimated_budget: number;
+  currency: string;
   technologies: string[];
   status: ProjectStatus;
   created_at?: Date;

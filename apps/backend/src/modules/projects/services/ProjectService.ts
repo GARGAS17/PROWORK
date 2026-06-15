@@ -9,6 +9,7 @@ export class ProjectService {
     title: string,
     description: string,
     estimatedBudget: number,
+    currency: string,
     technologies: string[]
   ): Promise<Project> {
     // Forzamos el estado a ABIERTO inicialmente
@@ -17,6 +18,7 @@ export class ProjectService {
       title,
       description,
       estimated_budget: estimatedBudget,
+      currency,
       technologies,
       status: ProjectStatus.ABIERTO,
     };
