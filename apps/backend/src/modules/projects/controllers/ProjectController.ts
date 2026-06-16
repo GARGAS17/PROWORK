@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import { ProjectService } from '../services/ProjectService';
+import { PaymentService } from '../../payments/services/PaymentService';
+import { CreateProjectDTO } from '../models/Project';
 
 const createProjectSchema = z.object({
   title: z.string().min(5, 'El título debe tener al menos 5 caracteres.'),
@@ -11,7 +13,10 @@ const createProjectSchema = z.object({
 });
 
 export class ProjectController {
-  constructor(private readonly projectService: ProjectService) {}
+  constructor(
+    private readonly projectService: ProjectService,
+    private readonly paymentService: PaymentService
+  ) {}
 
   crearProyecto = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -67,6 +72,37 @@ export class ProjectController {
       });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
+    }
+  };
+
+  obtenerProyecto = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const projectId = req.params.id;
+      const project = await this.projectService.obtenerProyecto(projectId);
+      if (!project) {
+        res.status(404).json({ error: 'Proyecto no encontrado' });
+        return;
+      }
+      res.status(200).json({ data: project });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+
+  finalizarProyecto = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const companyId = req.user!.id;
+      const projectId = req.params.id;
+      
+      // 1. Cerrar el proyecto en BD
+      await this.projectService.finalizarProyecto(companyId, projectId);
+      
+      // 2. Liberar los fondos al freelancer
+      await this.paymentService.releaseFunds(projectId);
+
+      res.status(200).json({ message: 'Proyecto cerrado y fondos liberados exitosamente' });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
     }
   };
 }

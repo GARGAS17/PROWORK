@@ -24,6 +24,7 @@ const STRATEGY_NAVIGATION: Record<Role, SidebarItemConfig[]> = {
   freelancer: [
     { name: 'Mi Feed', href: '/freelancer', icon: Search },
     { name: 'Mis Postulaciones', href: '/freelancer/postulaciones', icon: Briefcase },
+    { name: 'Mis Trabajos', href: '/freelancer/trabajos', icon: FileText },
     { name: 'Configuración', href: '/freelancer/settings', icon: Settings },
   ],
   empresa: [

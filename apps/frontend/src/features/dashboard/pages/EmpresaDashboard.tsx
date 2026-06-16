@@ -113,9 +113,21 @@ export const EmpresaDashboard = () => {
                 <span className="font-black text-gray-900 dark:text-white">
                   ${project.estimated_budget} <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{project.currency || 'USD'}</span>
                 </span>
-                <button className="px-4 py-2 text-sm font-medium bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors text-gray-900 dark:text-white">
-                  Ver postulantes
-                </button>
+                {project.status === 'in_progress' || project.status === 'completed' || project.status === 'asignado' || project.status === 'en_progreso' ? (
+                  <Link 
+                    to={`/empresa/proyecto/${project.id}/workspace`}
+                    className="px-4 py-2 bg-indigo-100 dark:bg-indigo-500/20 hover:bg-indigo-200 dark:hover:bg-indigo-500/30 text-indigo-700 dark:text-indigo-400 rounded-lg text-sm font-bold transition-colors"
+                  >
+                    Espacio de Trabajo
+                  </Link>
+                ) : (
+                  <Link 
+                    to={`/empresa/proyecto/${project.id}/postulantes`}
+                    className="px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-bold transition-colors"
+                  >
+                    Ver postulantes
+                  </Link>
+                )}
               </div>
             </div>
           ))}

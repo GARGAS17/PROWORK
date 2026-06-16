@@ -4,6 +4,9 @@ import { Application } from '../models/Application';
 export interface IApplicationRepository {
   create(application: Omit<Application, 'id' | 'created_at' | 'updated_at'>): Promise<Application>;
   findByFreelancer(freelancerId: string): Promise<any[]>;
+  findByProjectId(projectId: string): Promise<any[]>;
+  findById(applicationId: string): Promise<any>;
+  updateStatus(applicationId: string, status: string): Promise<void>;
   selectWinnerTransaction(applicationId: string, projectId: string): Promise<void>;
 }
 
@@ -44,6 +47,58 @@ export class SupabaseApplicationRepository implements IApplicationRepository {
       throw new Error(`Error al obtener postulaciones: ${error.message}`);
     }
     return data || [];
+  }
+
+  async findByProjectId(projectId: string): Promise<any[]> {
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select(`
+        *,
+        users (
+          email,
+          profiles (
+            full_name,
+            bio,
+            avatar_url,
+            freelancer_skills (
+              skills (
+                name
+              )
+            )
+          )
+        )
+      `)
+      .eq('project_id', projectId)
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      throw new Error(`Error al obtener postulantes: ${error.message}`);
+    }
+    return data || [];
+  }
+
+  async findById(applicationId: string): Promise<any> {
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select('*')
+      .eq('id', applicationId)
+      .single();
+    
+    if (error) {
+      throw new Error(`Error al buscar postulación: ${error.message}`);
+    }
+    return data;
+  }
+
+  async updateStatus(applicationId: string, status: string): Promise<void> {
+    const { error } = await supabase
+      .from(this.tableName)
+      .update({ status })
+      .eq('id', applicationId);
+
+    if (error) {
+      throw new Error(`Error al actualizar estado de la postulación: ${error.message}`);
+    }
   }
 
   async selectWinnerTransaction(applicationId: string, projectId: string): Promise<void> {

@@ -34,4 +34,16 @@ export class ProjectService {
   async obtenerProyectosPorEmpresa(companyId: string): Promise<Project[]> {
     return await this.projectRepository.findByCompanyId(companyId);
   }
+
+  async obtenerProyecto(projectId: string): Promise<Project | null> {
+    return await this.projectRepository.findById(projectId);
+  }
+
+  async finalizarProyecto(companyId: string, projectId: string): Promise<void> {
+    const project = await this.projectRepository.findById(projectId);
+    if (!project) throw new Error('Proyecto no encontrado');
+    if (project.company_id !== companyId) throw new Error('No tienes permiso para modificar este proyecto');
+
+    await this.projectRepository.updateStatus(projectId, ProjectStatus.CERRADO);
+  }
 }
