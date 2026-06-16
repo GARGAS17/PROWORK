@@ -7,6 +7,7 @@ import {
   PlusCircle,
   FileText,
   ShieldAlert,
+  Wallet,
 } from 'lucide-react';
 import type { Role } from '../../../context/AuthContext';
 import type { ReactNode, ElementType } from 'react';
@@ -25,17 +26,20 @@ const STRATEGY_NAVIGATION: Record<Role, SidebarItemConfig[]> = {
     { name: 'Mi Feed', href: '/freelancer', icon: Search },
     { name: 'Mis Postulaciones', href: '/freelancer/postulaciones', icon: Briefcase },
     { name: 'Mis Trabajos', href: '/freelancer/trabajos', icon: FileText },
+    { name: 'Mi Billetera', href: '/freelancer/billetera', icon: Wallet },
     { name: 'Configuración', href: '/freelancer/settings', icon: Settings },
   ],
   empresa: [
     { name: 'Mis Proyectos', href: '/empresa', icon: LayoutDashboard },
     { name: 'Publicar Oferta', href: '/empresa/crear', icon: PlusCircle },
+    { name: 'Billetera y Pagos', href: '/empresa/billetera', icon: Wallet },
     { name: 'Talento Guardado', href: '/empresa/talento', icon: Users },
     { name: 'Configuración', href: '/empresa/settings', icon: Settings },
   ],
   admin: [
     { name: 'Visión Global', href: '/admin', icon: LayoutDashboard },
     { name: 'Curaduría de Proyectos', href: '/admin/proyectos', icon: FileText },
+    { name: 'Gestión de Pagos', href: '/admin/pagos', icon: Wallet },
     { name: 'Gestión de Usuarios', href: '/admin/usuarios', icon: Users },
     { name: 'Reportes y Alertas', href: '/admin/alertas', icon: ShieldAlert },
   ],

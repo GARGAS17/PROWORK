@@ -21,4 +21,35 @@ export class PaymentController {
       res.status(500).json({ error: error.message });
     }
   };
+
+  obtenerPagosPendientes = async (_req: Request, res: Response): Promise<void> => {
+    try {
+      const payments = await this.paymentService.getPendingAdminPayments();
+      res.status(200).json({ data: payments });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+
+  aprobarDesembolso = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { paymentId } = req.params;
+      // Porcentaje fijo por ahora, se podría pasar desde req.body si se quiere editar
+      const commissionPercent = 10; 
+
+      await this.paymentService.releaseAdminPayment(paymentId, commissionPercent);
+      res.status(200).json({ message: 'Pago desembolsado exitosamente' });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  };
+
+  obtenerEstadisticasAdmin = async (_req: Request, res: Response): Promise<void> => {
+    try {
+      const stats = await this.paymentService.getAdminStats();
+      res.status(200).json({ data: stats });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  };
 }

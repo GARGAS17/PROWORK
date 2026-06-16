@@ -7,6 +7,14 @@ export interface IPaymentRepository {
   findByCompany(companyId: string): Promise<Payment[]>;
   findByFreelancer(freelancerId: string): Promise<Payment[]>;
   findByProject(projectId: string): Promise<Payment[]>;
+  findPendingAdmin(): Promise<any[]>;
+  updateAdminRelease(id: string, commission: number, freelancerAmount: number): Promise<void>;
+  getAdminStats(): Promise<{
+    totalCommission: number;
+    totalPendingEscrow: number;
+    confirmedPaymentsCount: number;
+    pendingPaymentsCount: number;
+  }>;
 }
 
 export class SupabasePaymentRepository implements IPaymentRepository {
@@ -70,5 +78,70 @@ export class SupabasePaymentRepository implements IPaymentRepository {
     
     if (error) throw new Error(`Error al obtener pagos del proyecto: ${error.message}`);
     return data || [];
+  }
+
+  async findPendingAdmin(): Promise<any[]> {
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select(`
+        *,
+        projects (title, estimated_budget, company_id),
+        freelancers:users!freelancer_id (profiles(full_name)),
+        companies:users!company_id (profiles(full_name))
+      `)
+      .eq('status', 'pending_admin')
+      .order('updated_at', { ascending: false });
+
+    if (error) throw new Error(`Error al obtener pagos pendientes: ${error.message}`);
+    return data || [];
+  }
+
+  async updateAdminRelease(id: string, commission: number, freelancerAmount: number): Promise<void> {
+    const { error } = await supabase
+      .from(this.tableName)
+      .update({ 
+        status: 'released', 
+        commission_amount: commission, 
+        freelancer_amount: freelancerAmount,
+        updated_at: new Date().toISOString() 
+      })
+      .eq('id', id);
+
+    if (error) throw new Error(`Error al liberar pago: ${error.message}`);
+  }
+
+  async getAdminStats(): Promise<{
+    totalCommission: number;
+    totalPendingEscrow: number;
+    confirmedPaymentsCount: number;
+    pendingPaymentsCount: number;
+  }> {
+    const { data, error } = await supabase
+      .from(this.tableName)
+      .select('amount, commission_amount, status');
+
+    if (error) throw new Error(`Error al obtener estadísticas: ${error.message}`);
+
+    let totalCommission = 0;
+    let totalPendingEscrow = 0;
+    let confirmedPaymentsCount = 0;
+    let pendingPaymentsCount = 0;
+
+    data?.forEach(payment => {
+      if (payment.status === 'released') {
+        confirmedPaymentsCount++;
+        totalCommission += Number(payment.commission_amount || 0);
+      } else if (payment.status === 'pending_admin') {
+        pendingPaymentsCount++;
+        totalPendingEscrow += Number(payment.amount || 0);
+      }
+    });
+
+    return {
+      totalCommission,
+      totalPendingEscrow,
+      confirmedPaymentsCount,
+      pendingPaymentsCount
+    };
   }
 }

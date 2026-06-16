@@ -16,7 +16,7 @@ export class PaymentService {
     });
   }
 
-  async releaseFunds(projectId: string): Promise<void> {
+  async markAsPendingAdmin(projectId: string): Promise<void> {
     // Buscar el pago en escrow para este proyecto
     const payments = await this.paymentRepository.findByProject(projectId);
     const escrowPayment = payments.find(p => p.status === 'escrow');
@@ -25,8 +25,27 @@ export class PaymentService {
       throw new Error('No se encontró un pago en garantía para este proyecto');
     }
 
-    // Liberar fondos
-    await this.paymentRepository.updateStatus(escrowPayment.id, 'released');
+    // Marcar para revisión del admin
+    await this.paymentRepository.updateStatus(escrowPayment.id, 'pending_admin');
+  }
+
+  async getPendingAdminPayments(): Promise<any[]> {
+    return await this.paymentRepository.findPendingAdmin();
+  }
+
+  async releaseAdminPayment(paymentId: string, commissionPercent: number = 10): Promise<void> {
+    const payments = await this.paymentRepository.findPendingAdmin();
+    const payment = payments.find(p => p.id === paymentId);
+
+    if (!payment) {
+      throw new Error('Pago pendiente no encontrado');
+    }
+
+    const amount = Number(payment.amount);
+    const commissionAmount = (amount * commissionPercent) / 100;
+    const freelancerAmount = amount - commissionAmount;
+
+    await this.paymentRepository.updateAdminRelease(paymentId, commissionAmount, freelancerAmount);
   }
 
   async getCompanyPayments(companyId: string): Promise<any[]> {
@@ -35,5 +54,9 @@ export class PaymentService {
 
   async getFreelancerPayments(freelancerId: string): Promise<any[]> {
     return await this.paymentRepository.findByFreelancer(freelancerId);
+  }
+
+  async getAdminStats() {
+    return await this.paymentRepository.getAdminStats();
   }
 }

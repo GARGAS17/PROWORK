@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 import { ProjectService } from '../services/ProjectService';
 import { PaymentService } from '../../payments/services/PaymentService';
-import { CreateProjectDTO } from '../models/Project';
+// import { CreateProjectDTO } from '../models/Project'; // Removed unused import
 
 const createProjectSchema = z.object({
   title: z.string().min(5, 'El título debe tener al menos 5 caracteres.'),
@@ -97,10 +97,10 @@ export class ProjectController {
       // 1. Cerrar el proyecto en BD
       await this.projectService.finalizarProyecto(companyId, projectId);
       
-      // 2. Liberar los fondos al freelancer
-      await this.paymentService.releaseFunds(projectId);
+      // 2. Marcar los fondos como listos para revisión del Admin
+      await this.paymentService.markAsPendingAdmin(projectId);
 
-      res.status(200).json({ message: 'Proyecto cerrado y fondos liberados exitosamente' });
+      res.status(200).json({ message: 'Proyecto cerrado exitosamente. El pago está en revisión por la administración.' });
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
