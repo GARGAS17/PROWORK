@@ -9,6 +9,7 @@ import { FreelancerDashboard } from './features/dashboard/pages/FreelancerDashbo
 import { EmpresaDashboard } from './features/dashboard/pages/EmpresaDashboard';
 import { AdminDashboard } from './features/dashboard/pages/AdminDashboard';
 import { AdminPaymentsPage } from './features/dashboard/pages/AdminPaymentsPage';
+import { AdminConsultingPage } from './features/dashboard/pages/AdminConsultingPage';
 import { CreateProjectPage } from './features/projects/pages/CreateProjectPage';
 import { ProjectApplicationsPage } from './features/projects/pages/ProjectApplicationsPage';
 
@@ -68,6 +69,7 @@ function App() {
             <Route path="/admin" element={<DashboardLayout />}>
               <Route index element={<AdminDashboard />} />
               <Route path="pagos" element={<AdminPaymentsPage />} />
+              <Route path="asesorias" element={<AdminConsultingPage />} />
               <Route path="proyectos" element={<div className="p-10 text-2xl font-bold dark:text-white">Curaduría de Proyectos</div>} />
               <Route path="usuarios" element={<div className="p-10 text-2xl font-bold dark:text-white">Gestión de Usuarios</div>} />
               <Route path="alertas" element={<div className="p-10 text-2xl font-bold dark:text-white">Reportes y Alertas</div>} />

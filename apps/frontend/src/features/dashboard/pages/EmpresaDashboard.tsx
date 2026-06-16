@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../../context/AuthContext';
-import { Loader2, Plus } from 'lucide-react';
+import { Loader2, Plus, HeadphonesIcon, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface Project {
@@ -18,6 +18,8 @@ export const EmpresaDashboard = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isRequesting, setIsRequesting] = useState(false);
+  const [requestSuccess, setRequestSuccess] = useState(false);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -42,6 +44,26 @@ export const EmpresaDashboard = () => {
     fetchProjects();
   }, [token]);
 
+  const handleRequestConsulting = async () => {
+    setIsRequesting(true);
+    setError('');
+    setRequestSuccess(false);
+    try {
+      const res = await fetch('http://localhost:3000/api/consulting/request', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Error al solicitar asesoría');
+      setRequestSuccess(true);
+      setTimeout(() => setRequestSuccess(false), 5000);
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setIsRequesting(false);
+    }
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -53,14 +75,29 @@ export const EmpresaDashboard = () => {
             Gestiona las ofertas que has publicado para buscar talento.
           </p>
         </div>
-        
-        <Link 
-          to="/empresa/crear"
-          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-sm"
-        >
-          <Plus className="w-5 h-5" />
-          Nueva Oferta
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          {requestSuccess && (
+            <span className="text-emerald-600 font-bold text-sm flex items-center gap-1 bg-emerald-50 px-3 py-2 rounded-lg">
+              <CheckCircle2 className="w-4 h-4" /> Solicitud enviada
+            </span>
+          )}
+          <button 
+            onClick={handleRequestConsulting}
+            disabled={isRequesting}
+            className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 px-5 py-2.5 rounded-xl font-bold transition-all shadow-sm disabled:opacity-50"
+          >
+            {isRequesting ? <Loader2 className="w-5 h-5 animate-spin" /> : <HeadphonesIcon className="w-5 h-5" />}
+            Solicitar Asesoría
+          </button>
+          
+          <Link 
+            to="/empresa/crear"
+            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-sm"
+          >
+            <Plus className="w-5 h-5" />
+            Nueva Oferta
+          </Link>
+        </div>
       </div>
       
       {isLoading ? (

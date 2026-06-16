@@ -8,6 +8,7 @@ import {
   FileText,
   ShieldAlert,
   Wallet,
+  HeadphonesIcon
 } from 'lucide-react';
 import type { Role } from '../../../context/AuthContext';
 import type { ReactNode, ElementType } from 'react';
@@ -40,6 +41,7 @@ const STRATEGY_NAVIGATION: Record<Role, SidebarItemConfig[]> = {
     { name: 'Visión Global', href: '/admin', icon: LayoutDashboard },
     { name: 'Curaduría de Proyectos', href: '/admin/proyectos', icon: FileText },
     { name: 'Gestión de Pagos', href: '/admin/pagos', icon: Wallet },
+    { name: 'Asesorías', href: '/admin/asesorias', icon: HeadphonesIcon },
     { name: 'Gestión de Usuarios', href: '/admin/usuarios', icon: Users },
     { name: 'Reportes y Alertas', href: '/admin/alertas', icon: ShieldAlert },
   ],
